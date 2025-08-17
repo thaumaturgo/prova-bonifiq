@@ -1,29 +1,36 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using ProvaPub.Models;
 using ProvaPub.Repository;
+using ProvaPub.Services.Interfaces;
 
-namespace ProvaPub.Services
+namespace ProvaPub.Services;
+
+public class RandomService : IRandomService
 {
-	public class RandomService
-	{
-		int seed;
-        TestDbContext _ctx;
-		public RandomService()
-        {
-            var contextOptions = new DbContextOptionsBuilder<TestDbContext>()
-    .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Teste;Trusted_Connection=True;")
-    .Options;
-            seed = Guid.NewGuid().GetHashCode();
+    private readonly TestDbContext _ctx;
+    public RandomService(TestDbContext ctx)
+    {
+        _ctx = ctx;
+    }
+    public async Task<int?> GetRandom(CancellationToken ct = default)
+    {
+        const int max = 100;
 
-            _ctx = new TestDbContext(contextOptions);
-        }
-        public async Task<int> GetRandom()
-		{
-            var number =  new Random(seed).Next(100);
-            _ctx.Numbers.Add(new RandomNumber() { Number = number });
-            _ctx.SaveChanges();
-			return number;
-		}
+        var existing = await _ctx.Numbers
+            .AsNoTracking()
+            .Select(x => x.Number)
+            .ToListAsync(ct);
 
-	}
+        if (existing.Count >= max) return null;
+
+        var missing = Enumerable.Range(0, max)
+            .Except(existing)
+            .OrderBy(_ => Random.Shared.Next())
+            .First();
+
+        _ctx.Numbers.Add(new RandomNumber { Number = missing });
+        await _ctx.SaveChangesAsync(ct);
+        return missing;
+    } 
 }

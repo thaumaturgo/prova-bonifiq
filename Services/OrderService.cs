@@ -1,44 +1,31 @@
-﻿using ProvaPub.Models;
-using ProvaPub.Repository;
+﻿using ProvaPub.Repository;
+using ProvaPub.Services.Interfaces;
+using ProvaPub.ViewModels.Parte3;
 
-namespace ProvaPub.Services
+namespace ProvaPub.Services;
+
+public class OrderService : IOrderService
 {
-	public class OrderService
-	{
-        TestDbContext _ctx;
+    private readonly TestDbContext _ctx;
+    private readonly IPaymentStrategyResolver _resolver;
 
-        public OrderService(TestDbContext ctx)
-        {
-            _ctx = ctx;
-        }
+    public OrderService(TestDbContext ctx, IPaymentStrategyResolver resolver)
+    {
+        _ctx = ctx;
+        _resolver = resolver;
+    }
 
-        public async Task<Order> PayOrder(string paymentMethod, decimal paymentValue, int customerId)
-		{
-			if (paymentMethod == "pix")
-			{
-				//Faz pagamento...
-			}
-			else if (paymentMethod == "creditcard")
-			{
-				//Faz pagamento...
-			}
-			else if (paymentMethod == "paypal")
-			{
-				//Faz pagamento...
-			}
+    public async Task<OrderDto> PayOrder(PayOrderDto dto, CancellationToken ct = default)
+    {
+        var strategy = _resolver.Resolve(dto.PaymentMethod);
 
-			return await InsertOrder(new Order() //Retorna o pedido para o controller
-            {
-                Value = paymentValue
-            });
+        var order = await strategy.PayAsync(dto.PaymentValue, dto.CustomerId);
 
+        await _ctx.Orders.AddAsync(order, ct);
 
-		}
+        await _ctx.SaveChangesAsync(ct);
 
-		public async Task<Order> InsertOrder(Order order)
-        {
-			//Insere pedido no banco de dados
-			return (await _ctx.Orders.AddAsync(order)).Entity;
-        }
-	}
+        return OrderDto.FromEntity(order);
+    }
+
 }
