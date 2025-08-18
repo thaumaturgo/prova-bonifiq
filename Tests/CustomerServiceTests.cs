@@ -1,6 +1,8 @@
-﻿namespace ProvaPub.Tests
+﻿namespace ProvaPub.Tests;
+
+public class CustomerServiceTests
 {
-    public class CustomerServiceTests
-    {
-    }
+   
+
+     
 }

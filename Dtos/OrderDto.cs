@@ -1,6 +1,6 @@
 ﻿using ProvaPub.Models;
 
-namespace ProvaPub.ViewModels.Parte3;
+namespace ProvaPub.Dtos;
 
 public sealed record OrderDto(
  int CustomerId,

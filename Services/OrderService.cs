@@ -1,6 +1,6 @@
-﻿using ProvaPub.Repository;
+﻿using ProvaPub.Dtos;
+using ProvaPub.Repository;
 using ProvaPub.Services.Interfaces;
-using ProvaPub.ViewModels.Parte3;
 
 namespace ProvaPub.Services;
 

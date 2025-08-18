@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ProvaPub.Models;
 using ProvaPub.Repository;
 using ProvaPub.Services.Interfaces;
@@ -34,3 +33,4 @@ public class RandomService : IRandomService
         return missing;
     } 
 }
+

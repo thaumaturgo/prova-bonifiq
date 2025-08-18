@@ -1,10 +1,11 @@
-﻿using ProvaPub.Models;
+﻿using ProvaPub.Dtos;
+using ProvaPub.Models;
 using ProvaPub.Models.Base;
 
 namespace ProvaPub.Services.Interfaces;
 
 public interface ICustomerService
 {
-    Task<PagedResult<Customer>> ListCustomers(PagedRequest request, CancellationToken ct = default);
-    Task<bool> CanPurchase(int customerId, decimal purchaseValue, CancellationToken ct = default);
+    Task<PagedResult<CustomerDto>> ListCustomers(PagedRequest request, CancellationToken ct = default);
+    Task<CanPurchaseResult> CanPurchase(PurchaseRequest request, CancellationToken ct = default);
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProvaPub.Dtos;
 using ProvaPub.Services.Interfaces;
 
 namespace ProvaPub.Controllers;
@@ -15,7 +16,7 @@ namespace ProvaPub.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class Parte4Controller : ControllerBase
-{ 
+{
     private readonly ICustomerService _customerService;
 
     public Parte4Controller(ICustomerService customerService)
@@ -24,8 +25,8 @@ public class Parte4Controller : ControllerBase
     }
 
     [HttpGet("CanPurchase")]
-    public async Task<bool> CanPurchase(int customerId, decimal purchaseValue)
-    { 
-        return await _customerService.CanPurchase(customerId, purchaseValue);
+    public async Task<IActionResult> CanPurchase([FromQuery] PurchaseRequest request)
+    {
+        return Ok(await _customerService.CanPurchase(request));
     }
 }

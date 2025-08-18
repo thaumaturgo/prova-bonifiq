@@ -1,5 +1,5 @@
-﻿using ProvaPub.Models;
-using ProvaPub.ViewModels.Parte3;
+﻿using ProvaPub.Dtos;
+using ProvaPub.Models;
 
 namespace ProvaPub.Services.Interfaces
 {
